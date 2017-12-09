@@ -10,7 +10,7 @@ namespace IOC.ImplB
     {
         public string DoSomething()
         {
-            return "don't want to code";
+            return "a lot of things to do";
         }
 
         public DateTime Time()

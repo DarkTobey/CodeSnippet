@@ -16,25 +16,22 @@ namespace IOC
             var facTypes = interFace.GetTypes().Where(whereFac);
             var implTypes = implement.GetTypes().Where(whereImpl);
 
-            foreach (var item in implTypes)
+            foreach (var imp in implTypes)
             {
-                var fac = item.GetInterfaces();
-                if (fac.Any())
+                var fac = imp.GetInterfaces();
+                if (!fac.Any()) continue;
+                foreach (var f in fac)
                 {
-                    foreach (var f in fac)
+                    if (dict.ContainsKey(f.FullName)) continue;
+                    if (facTypes.Contains(f))
                     {
-                        if (dict.ContainsKey(f.FullName)) continue;
-                        if (facTypes.Contains(f))
+                        dict.Add(f.FullName, new ImplementInfo()
                         {
-                            dict.Add(f.FullName, new ImplementInfo()
-                            {
-                                AssemblyName = implement.FullName,
-                                TypeFullName = item.FullName,
-                            });
-                            continue;
-                        };
-                    }
-
+                            AssemblyName = implement.FullName,
+                            TypeFullName = imp.FullName,
+                        });
+                        continue;
+                    };
                 }
             }
         }

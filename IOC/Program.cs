@@ -14,7 +14,7 @@ namespace IOC
         public static void Main(string[] args)
         {
             Assembly ass = Assembly.GetExecutingAssembly();
-            Container.Init(ass, ass, x => x.Namespace == "IOC.Interface", x => x.Namespace == "IOC.ImplA");
+            Container.Init(ass, ass, x => x.Namespace == "IOC.Interface", x => x.Namespace == "IOC.ImplB");
 
 
             //ICode codeImpl = Container.Resolve("IOC.Interface.ICode") as ICode;
