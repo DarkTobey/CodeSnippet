@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using IOC.Interface;
-using IOC.Impl;
+using IOC.ImplA;
 
 namespace IOC
 {
@@ -14,7 +14,7 @@ namespace IOC
         public static void Main(string[] args)
         {
             Assembly ass = Assembly.GetExecutingAssembly();
-            Container.Init(ass, ass, x => x.Namespace == "IOC.Interface", x => x.Namespace == "IOC.Impl");
+            Container.Init(ass, ass, x => x.Namespace == "IOC.Interface", x => x.Namespace == "IOC.ImplA");
 
 
             //ICode codeImpl = Container.Resolve("IOC.Interface.ICode") as ICode;
@@ -37,19 +37,19 @@ namespace IOC
 
         public void WakeUp(IWakeUp fac)
         {
-            string result = $"{fac.Name()} 的起床时间是 {fac.Time()} ";
+            string result = $"{fac.Time()}   {fac.Name()}   起床";
             Console.WriteLine(result);
         }
 
         public void Code(ICode fac)
         {
-            string result = $"在 {fac.Time()}  {fac.DoSomething()}";
+            string result = $"{fac.Time()}   {fac.DoSomething()}";
             Console.WriteLine(result);
         }
 
         public void Sleep(ISleep fac)
         {
-            string result = $"睡觉是在 {fac.Time()}";
+            string result = $"{fac.Time()}   睡觉";
             Console.WriteLine(result);
         }
     }

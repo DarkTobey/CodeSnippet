@@ -44,9 +44,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Container.cs" />
-    <Compile Include="Impl\Coding.cs" />
-    <Compile Include="Impl\Sleep.cs" />
-    <Compile Include="Impl\WakeUp.cs" />
+    <Compile Include="ImplA\Code.cs" />
+    <Compile Include="ImplA\Sleep.cs" />
+    <Compile Include="ImplA\WakeUp.cs" />
+    <Compile Include="ImplB\Code.cs" />
+    <Compile Include="ImplB\Sleep.cs" />
+    <Compile Include="ImplB\WakeUp.cs" />
     <Compile Include="Interface\ICode.cs" />
     <Compile Include="Interface\IWakeUp.cs" />
     <Compile Include="Interface\ISleep.cs" />

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IOC.Impl
+namespace IOC.ImplA
 {
     public class WakeUp : Interface.IWakeUp
     {

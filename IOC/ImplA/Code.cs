@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IOC.Impl
+namespace IOC.ImplA
 {
-    public class Coding : Interface.ICode
+    public class Code : Interface.ICode
     {
         public DateTime Time()
         {
