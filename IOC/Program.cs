@@ -37,20 +37,17 @@ namespace IOC
 
         public void WakeUp(IWakeUp fac)
         {
-            string result = $"{fac.Time()}   {fac.Name()}   起床";
-            Console.WriteLine(result);
+            Console.WriteLine($"{fac.Time()}   {fac.Name()}   起床");
         }
 
         public void Code(ICode fac)
         {
-            string result = $"{fac.Time()}   {fac.DoSomething()}";
-            Console.WriteLine(result);
+            Console.WriteLine($"{fac.Time()}   {fac.DoSomething()}");
         }
 
         public void Sleep(ISleep fac)
         {
-            string result = $"{fac.Time()}   睡觉";
-            Console.WriteLine(result);
+            Console.WriteLine($"{fac.Time()}   睡觉");
         }
     }
 
