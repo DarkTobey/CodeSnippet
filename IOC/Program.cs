@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using IOC.Interface;
-using IOC.ImplA;
 
 namespace IOC
 {
@@ -14,11 +13,11 @@ namespace IOC
         public static void Main(string[] args)
         {
             Assembly ass = Assembly.GetExecutingAssembly();
-            Container.Init(ass, ass, x => x.Namespace == "IOC.Interface", x => x.Namespace == "IOC.ImplB");
+            Container.Register(ass, ass, x => x.Namespace == "IOC.Interface", x => x.Namespace == "IOC.ImplA");
 
 
-            //ICode codeImpl = Container.Resolve("IOC.Interface.ICode") as ICode;
-            Container.ExeMethod(typeof(WholeDay), "Start");
+            ICode codeImpl = Container.Resolve<ICode>();
+            Utils.ExeMethod(typeof(WholeDay), "Start");
 
 
             Console.WriteLine();

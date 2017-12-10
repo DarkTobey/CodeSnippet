@@ -11,7 +11,7 @@ namespace IOC
     {
         private static Dictionary<string, ImplementInfo> dict = new Dictionary<string, ImplementInfo>();
 
-        public static void Init(Assembly interFace, Assembly implement, Func<Type, bool> whereFac, Func<Type, bool> whereImpl)
+        public static void Register(Assembly interFace, Assembly implement, Func<Type, bool> whereFac, Func<Type, bool> whereImpl)
         {
             var facTypes = interFace.GetTypes().Where(whereFac);
             var implTypes = implement.GetTypes().Where(whereImpl);
@@ -43,7 +43,6 @@ namespace IOC
                 AssemblyName = implement.Assembly.FullName,
                 TypeFullName = implement.FullName
             });
-
         }
 
         public static object Resolve(string key)
@@ -53,21 +52,13 @@ namespace IOC
             return Assembly.Load(implementInfo.AssemblyName).CreateInstance(implementInfo.TypeFullName);
         }
 
-        public static void ExeMethod(Type type, string methodName)
+        public static T Resolve<T>()
         {
-            Object obj = type.Assembly.CreateInstance(type.FullName);
-            MethodInfo method = type.GetMethod(methodName);
-            ParameterInfo[] paramInfo = method.GetParameters();
-            List<object> paramList = new List<object>();
-            foreach (var p in paramInfo)
-            {
-                Type pt = p.ParameterType;
-                object po = Container.Resolve(pt.FullName);
-                paramList.Add(po);
-            }
-            method.Invoke(obj, paramList.ToArray());
+            var type = typeof(T);
+            if (!dict.ContainsKey(type.FullName)) throw new Exception("该接口没有注册");
+            var implementInfo = dict[type.FullName];
+            return (T)Assembly.Load(implementInfo.AssemblyName).CreateInstance(implementInfo.TypeFullName);
         }
-
     }
 
 
