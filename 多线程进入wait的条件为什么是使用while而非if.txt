@@ -1,0 +1,167 @@
+﻿
+// Producer Consumer Model 生产者消费者模式
+class PCModel {
+	private final static int MAX = 10;
+
+	private LinkedList<Object> list = new LinkedList<Object>();
+
+	public void Product() {
+		while (true) {
+			try {
+				synchronized (list) {
+					while (list.size() >= MAX) {
+						System.out.println(Thread.currentThread().getName() + "【库存量达到最大】:" + list.size() + "  不能生产!");
+						list.wait();
+						System.out.println(Thread.currentThread().getName() + "等待后继续执行,现在size：" + list.size());
+					}
+					list.add(new Object());
+					System.out.println(Thread.currentThread().getName() + "生产了一个产品，现仓储量为:" + list.size());
+					Thread.sleep(200);
+					list.notifyAll();
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void Consumer() {
+		while (true) {
+			try {
+				synchronized (list) {
+					while (list.size() <= 0) {
+						System.out.println(Thread.currentThread().getName() + "【库存量不足】:" + list.size() + "  不能消费!");
+						list.wait();
+						System.out.println(Thread.currentThread().getName() + "等待后继续执行，现在size：" + list.size());
+					}
+					list.remove();
+					System.out.println(Thread.currentThread().getName() + " 消费了一个产品，现仓储量为:" + list.size());
+					Thread.sleep(200);
+					list.notifyAll();
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+}
+
+
+P生产了一个产品，现仓储量为:1
+P生产了一个产品，现仓储量为:2
+P生产了一个产品，现仓储量为:3
+P生产了一个产品，现仓储量为:4
+P生产了一个产品，现仓储量为:5
+P生产了一个产品，现仓储量为:6
+P生产了一个产品，现仓储量为:7
+P生产了一个产品，现仓储量为:8
+P生产了一个产品，现仓储量为:9
+P生产了一个产品，现仓储量为:10
+P【库存量达到最大】:10  不能生产!
+C2 消费了一个产品，现仓储量为:9
+C2 消费了一个产品，现仓储量为:8
+C2 消费了一个产品，现仓储量为:7
+C2 消费了一个产品，现仓储量为:6
+C2 消费了一个产品，现仓储量为:5
+C2 消费了一个产品，现仓储量为:4
+C1 消费了一个产品，现仓储量为:3
+C1 消费了一个产品，现仓储量为:2
+C2 消费了一个产品，现仓储量为:1
+C2 消费了一个产品，现仓储量为:0
+C2【库存量不足】:0  不能消费!
+P等待后继续执行,现在size：0
+P生产了一个产品，现仓储量为:1
+P生产了一个产品，现仓储量为:2
+P生产了一个产品，现仓储量为:3
+P生产了一个产品，现仓储量为:4
+P生产了一个产品，现仓储量为:5
+P生产了一个产品，现仓储量为:6
+P生产了一个产品，现仓储量为:7
+P生产了一个产品，现仓储量为:8
+P生产了一个产品，现仓储量为:9
+P生产了一个产品，现仓储量为:10
+P【库存量达到最大】:10  不能生产!
+C2等待后继续执行，现在size：10
+C2 消费了一个产品，现仓储量为:9
+C1 消费了一个产品，现仓储量为:8
+C1 消费了一个产品，现仓储量为:7
+C1 消费了一个产品，现仓储量为:6
+C1 消费了一个产品，现仓储量为:5
+C1 消费了一个产品，现仓储量为:4
+C1 消费了一个产品，现仓储量为:3
+C1 消费了一个产品，现仓储量为:2
+C1 消费了一个产品，现仓储量为:1
+C1 消费了一个产品，现仓储量为:0
+C1【库存量不足】:0  不能消费!
+C2【库存量不足】:0  不能消费!
+P等待后继续执行,现在size：0
+P生产了一个产品，现仓储量为:1
+P生产了一个产品，现仓储量为:2
+P生产了一个产品，现仓储量为:3
+P生产了一个产品，现仓储量为:4
+P生产了一个产品，现仓储量为:5
+P生产了一个产品，现仓储量为:6
+P生产了一个产品，现仓储量为:7
+P生产了一个产品，现仓储量为:8
+C2等待后继续执行，现在size：8
+C2 消费了一个产品，现仓储量为:7
+C2 消费了一个产品，现仓储量为:6
+C2 消费了一个产品，现仓储量为:5
+C2 消费了一个产品，现仓储量为:4
+C2 消费了一个产品，现仓储量为:3
+C2 消费了一个产品，现仓储量为:2
+C2 消费了一个产品，现仓储量为:1
+C2 消费了一个产品，现仓储量为:0
+C2【库存量不足】:0  不能消费!
+C1等待后继续执行，现在size：0  
+
+======================================>>>> 
+说明抛出异常的原因：
+问题发生在这里发生了，C2将产品全部消费掉了，现在产品库存为0，所以通知了所有等待中的线程，但是P没有抢到执行权（合理情况是 产品没了，应该让P1开始执行生产），反而让C1抢到了，
+C1从等待中恢复，因为之前已经使用if判断过条件已经成立，所有会从上次挂起的地方开始直接继续执行，
+走出if块，继续执行（合理情况是 这里应该再次判断条件，再决定是继续等待还是开始消费）
+但是商品被C2全部消耗完了,List中已经没有元素，向下执行remove时就会抛出异常
+
+解决这个问题：
+条件判断使用while，不能用if（jdk文档也有提醒）。
+
+使用while时的情形（注意和上面有什么不同）
+C1从等待中恢复，因为之前已经使用while判断过条件已经成立，所有会从上次挂起的地方开始直接继续执行，（看到这里似乎没有什么不同，但是继续）
+但注意，因为是这里是一个循环，继续执行的是循环代码，先判断条件，发现符合条件，进入循环体，在循环体中执行了wait(),继续等待，
+从而不会向下执行list的remove方法，就不会抛出异常，
+======================================>>>> 
+
+Exception in thread "C1" java.util.NoSuchElementException
+	at java.util.LinkedList.removeFirst(Unknown Source)
+	at java.util.LinkedList.remove(Unknown Source)
+	at xd.PCModel.Consumer(ThreadDemo.java:214)
+	at xd.ThreadDemo$2.run(ThreadDemo.java:71)
+	at java.lang.Thread.run(Unknown Source)
+	
+P生产了一个产品，现仓储量为:1
+P生产了一个产品，现仓储量为:2
+P生产了一个产品，现仓储量为:3
+P生产了一个产品，现仓储量为:4
+P生产了一个产品，现仓储量为:5
+P生产了一个产品，现仓储量为:6
+P生产了一个产品，现仓储量为:7
+P生产了一个产品，现仓储量为:8
+P生产了一个产品，现仓储量为:9
+P生产了一个产品，现仓储量为:10
+P【库存量达到最大】:10  不能生产!
+C2等待后继续执行，现在size：10
+C2 消费了一个产品，现仓储量为:9
+C2 消费了一个产品，现仓储量为:8
+C2 消费了一个产品，现仓储量为:7
+C2 消费了一个产品，现仓储量为:6
+C2 消费了一个产品，现仓储量为:5
+C2 消费了一个产品，现仓储量为:4
+C2 消费了一个产品，现仓储量为:3
+C2 消费了一个产品，现仓储量为:2
+C2 消费了一个产品，现仓储量为:1
+C2 消费了一个产品，现仓储量为:0
+C2【库存量不足】:0  不能消费!
+P等待后继续执行,现在size：0
+
