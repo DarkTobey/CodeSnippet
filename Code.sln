@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOC", "IOC\IOC.csproj", "{7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Study", "Study\Study.csproj", "{408BD67F-5254-455D-B222-AD2C082C4F20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObserverPattern", "ObserverPattern\ObserverPattern.csproj", "{31E2C4A7-9A17-445F-8E07-E96228C2763C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiThread", "MultiThread\MultiThread.csproj", "{C28E7ADC-8BA4-4751-B75D-9F4EFC2E97D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{408BD67F-5254-455D-B222-AD2C082C4F20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{408BD67F-5254-455D-B222-AD2C082C4F20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{408BD67F-5254-455D-B222-AD2C082C4F20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31E2C4A7-9A17-445F-8E07-E96228C2763C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31E2C4A7-9A17-445F-8E07-E96228C2763C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31E2C4A7-9A17-445F-8E07-E96228C2763C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31E2C4A7-9A17-445F-8E07-E96228C2763C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C28E7ADC-8BA4-4751-B75D-9F4EFC2E97D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C28E7ADC-8BA4-4751-B75D-9F4EFC2E97D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C28E7ADC-8BA4-4751-B75D-9F4EFC2E97D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C28E7ADC-8BA4-4751-B75D-9F4EFC2E97D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
