@@ -1,4 +1,34 @@
 ﻿
+//调用
+PCModel pc = new PCModel();
+Thread t1 = new Thread(new Runnable() {
+	public void run() {
+		pc.Product();
+	}
+});
+
+Thread t2 = new Thread(new Runnable() {
+	public void run() {
+		pc.Consumer();
+	}
+});
+
+Thread t3 = new Thread(new Runnable() {
+	public void run() {
+		pc.Consumer();
+	}
+});
+
+t1.setName("P");
+t2.setName("C1");
+t3.setName("C2");
+
+t1.start();
+t2.start();
+t3.start();
+
+
+
 // Producer Consumer Model 生产者消费者模式
 class PCModel {
 	private final static int MAX = 10;
