@@ -188,6 +188,7 @@ namespace ObserverPattern
             }
         }
     }
+
     #endregion
 
     public class Callback
@@ -207,6 +208,9 @@ namespace ObserverPattern
 
     /// <summary>
     /// 基于Reactor思想实现一个简单的事件驱动模型，模拟 浏览器的运行情况
+    /// 
+    /// Reactor模式是处理并发I/O比较常见的一种模式，用于同步I/O，中心思想是将所有要处理的I/O事件注册到一个中心I/O多路复用器上，同时主线程/进程阻塞在多路复用器上；
+    /// 一旦有I/O事件到来或是准备就绪(文件描述符或socket可读、写)，多路复用器返回并将事先注册的相应I/O事件分发到对应的处理器中。
     /// </summary>
     public class Reactor
     {
@@ -235,13 +239,13 @@ namespace ObserverPattern
         {
             //其他的一些线程
 
-            //模拟 UI渲染线程
+            //UI渲染线程
             Task.Run(() =>
             {
                 //渲染UI
             });
 
-            //模拟 js执行线程
+            //js执行线程
             Task.Run(() =>
             {
                 //你的js代码会订阅很多事件,并注册对应的回调函数
@@ -251,8 +255,10 @@ namespace ObserverPattern
                 Dispatcher.Subscribe("btn2_click", new Callback("btn2"));
                 Dispatcher.Subscribe("btn3_click", new Callback("btn3"));
 
-                //模拟产生了一些任务队列，如定时任务，ajax请求等
+                //模拟产生了一些任务并放到队列中，setTimeout，setInterval，ajax请求等
                 //当注册ajax任务时，如果设置ajax为同步执行，将js线程await,ajax完成后在执行队列线程中notify即可
+                //setTimeout 新起一个线程，睡眠n秒，之后向队列中推一个任务
+                //setInterval 新起一个线程，在循环中{睡眠n秒，向队列中推一个任务},
                 while (true)
                 {
                     lock (TaskQueue)
@@ -265,7 +271,7 @@ namespace ObserverPattern
                 }
             });
 
-            //模拟 执行任务队列的线程
+            //执行任务队列的线程
             Task.Run(() =>
             {
                 while (true)
@@ -281,8 +287,8 @@ namespace ObserverPattern
                 }
             });
 
-            //主线程模拟 事件收发（他会向操作系统订阅用户的各种IO操作，同时自己也接受别人的订阅， 当他收到操作系统的通知时，他再将通知下发给订阅他的人）
-            //主线程阻塞在分发器上，随时等待着系统通知（这里就手动输入代替系统通知）
+            //主线程用来处理事件收发（他会向操作系统订阅用户的各种IO操作，同时自己也接受别人的订阅， 当他收到操作系统的通知时，他再将通知下发给订阅他的人）
+            //主线程应该阻塞在分发器上，随时等待着系统通知（这里就手动输入代替系统通知）
             while (true)
             {
                 string input = Console.ReadLine();
