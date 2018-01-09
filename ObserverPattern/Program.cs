@@ -10,17 +10,21 @@ namespace ObserverPattern
     {
         static void Main(string[] args)
         {
+
+            new Reactor().Run();
+
             var subject = Subject.GetInstance();
             var a = new ObserverA(subject);
             var b = new ObserverB(subject);
             subject.State = 1;
             subject.State = 6;
 
+            var dispatcher = MessageBus.GetInstance();
 
-            MessageBus.Subscribe("a", new Callback("XD"));
-            MessageBus.Subscribe("a", new Callback("Tobey"));
-            MessageBus.Subscribe("b", new Callback("Ani"));
-            MessageBus.Publish("a", obs =>
+            dispatcher.Subscribe("a", new Callback("XD"));
+            dispatcher.Subscribe("a", new Callback("Tobey"));
+            dispatcher.Subscribe("b", new Callback("Ani"));
+            dispatcher.Publish("a", obs =>
             {
                 (obs as Callback).Do();
             });
@@ -48,6 +52,10 @@ namespace ObserverPattern
             return instance;
         }
 
+
+        /// <summary>
+        /// 当然,我这里模拟mvvm的get set实现,stata的值改变之后，通知所有的观察者更新View
+        /// </summary>
         public int State
         {
             get
@@ -120,7 +128,18 @@ namespace ObserverPattern
 
         private static object msgLock = new object();
 
-        public static void Subscribe(string topic, object obj)
+        private static MessageBus instance = new MessageBus();
+
+        private MessageBus()
+        {
+        }
+
+        public static MessageBus GetInstance()
+        {
+            return instance;
+        }
+
+        public void Subscribe(string topic, object obj)
         {
             if (string.IsNullOrEmpty(topic)) return;
             lock (msgLock)
@@ -135,7 +154,7 @@ namespace ObserverPattern
             }
         }
 
-        public static void UnSubscribe(object obj)
+        public void UnSubscribe(object obj)
         {
             lock (msgLock)
             {
@@ -154,7 +173,7 @@ namespace ObserverPattern
             }
         }
 
-        public static void Publish(string topic, Action<object> act)
+        public void Publish(string topic, Action<object> act)
         {
             if (string.IsNullOrEmpty(topic)) return;
             lock (msgLock)
@@ -171,19 +190,110 @@ namespace ObserverPattern
     }
     #endregion
 
-
     public class Callback
     {
-        public string Name { get; set; }
+        public string Message { get; set; }
 
-        public Callback(string name)
+        public Callback(string message)
         {
-            Name = name;
+            Message = message;
         }
 
         public void Do()
         {
-            Console.WriteLine($"my name is {Name}");
+            Console.WriteLine($"回调的执行信息: {Message}");
         }
     }
+
+    /// <summary>
+    /// 基于Reactor思想实现一个简单的事件驱动模型，模拟 浏览器的运行情况
+    /// </summary>
+    public class Reactor
+    {
+        //IO多路复用--epoll详解
+        //http://www.cnblogs.com/harvyxu/p/7487588.html
+
+
+        // 事件驱动模式--Reactor
+        // http://www.cnblogs.com/harvyxu/p/7498763.html
+
+
+        //一个浏览器页面至少应该有几个线程(至少有三个 常驻线程:javascript引擎线程,界面渲染线程,浏览器事件触发线程,除些以外,也有一些执行完就终止的线程,如Http请求线程)
+        //http://blog.csdn.net/kfanning/article/details/5768776
+
+
+        //单线程的js是如何处理异步操作的(这其实是病句，一个线程执行js代码，I/O操作可以再其他线程完成，完成之后通知js线程就行了)
+        //https://www.cnblogs.com/woodyblog/p/6061671.html
+
+        //用于事件驱动的分发器
+        private MessageBus Dispatcher = MessageBus.GetInstance();
+
+        //执行队列
+        private Queue<Callback> TaskQueue = new Queue<Callback>();
+
+        public void Run()
+        {
+            //其他的一些线程
+
+            //模拟 UI渲染线程
+            Task.Run(() =>
+            {
+                //渲染UI
+            });
+
+            //模拟 js执行线程
+            Task.Run(() =>
+            {
+                //你的js代码会订阅很多事件,并注册对应的回调函数
+                Dispatcher.Subscribe("btn1_click", new Callback("btn1注册的第一个回调"));
+                Dispatcher.Subscribe("btn1_click", new Callback("btn2注册的第二个回调"));
+
+                Dispatcher.Subscribe("btn2_click", new Callback("btn2"));
+                Dispatcher.Subscribe("btn3_click", new Callback("btn3"));
+
+                //模拟产生了一些任务队列，如定时任务，ajax请求等
+                //当注册ajax任务时，如果设置ajax为同步执行，将js线程await,ajax完成后在执行队列线程中notify即可
+                while (true)
+                {
+                    lock (TaskQueue)
+                    {
+                        if (TaskQueue.Count < 1000)
+                        {
+                            TaskQueue.Enqueue(new Callback("第" + TaskQueue.Count + "个元素"));
+                        }
+                    }
+                }
+            });
+
+            //模拟 执行任务队列的线程
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    lock (TaskQueue)
+                    {
+                        if (TaskQueue.Count > 0)
+                        {
+                            var item = TaskQueue.Dequeue();
+                            item.Do();
+                        }
+                    }
+                }
+            });
+
+            //主线程模拟 事件收发（他会向操作系统订阅用户的各种IO操作，同时自己也接受别人的订阅， 当他收到操作系统的通知时，他再将通知下发给订阅他的人）
+            //主线程阻塞在分发器上，随时等待着系统通知（这里就手动输入代替系统通知）
+            while (true)
+            {
+                string input = Console.ReadLine();
+                Dispatcher.Publish(input, x =>
+                {
+                    (x as Callback).Do();
+                });
+            }
+
+        }
+    }
+
+
 }
