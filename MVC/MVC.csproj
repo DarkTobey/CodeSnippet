@@ -47,8 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client.cs" />
     <Compile Include="Common\Dispatcher.cs" />
     <Compile Include="Common\Results.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="Controller\HomeController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Common\Tags.cs" />
